@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="bg-light py-4 my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h4 class="mb-3"> {{ product| upper }} Details</h4>
+                    <hr style="border-top: rgb(61, 140, 204);">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                          <li class="breadcrumb-item"><a href="{% url 'collectionsview' product.category.name %}">Collections</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">{{product}}</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-4 my-3 pic-box">
+                    {% if product.trending %}
+                        <div class="hot">HOT</div>
+                    {% endif %}
+                    <img src="{{ product.product_image.url}}" alt="" class="card-image-top">
+                </div>
+                <div class="col-8 my-3">
+                    <h5 class="text-success">{{product.name}}</h5>
+                    <p>{{ product.vendor}}</p>
+                    <p>{{ product.descriptions}} </p>
+                    <h6 class="my-2 " >current price: <s>Rs.{{product.original_price }}</s></h6>
+                    <h5 class="my-2">offer price : Rs.{{product.selling_price | stringformat:'d'}}</h5>
+                    <div class="my-3">
+                        {% if product.quantity > 0 %}
+                        <input type="hidden" id="pid" value="{{ product.id }}">
+                        <!-- {% csrf_token %} -->
+                          
+                            <p>
+                               <div class="input-group" style="width:150px">
+                                    <button class="input-group-test bg-success text-light" id="btnminus">
+                                       <i class="fa fa-minus"></i>
+                                    </button>
+                                    <input type="text" class="form-control text-center" value="1" id="txtqty" name="qty">
+                                    <button class="input-group-test bg-success text-light" id="btnplus">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                               </div>
+                            </p>
+                            <button class="btn btn-primary" id="btnCart"><i class="fa fa-shopping-cart"></i>ADD to cart</button>
+                        {% else %}    
+                            <button class="btn btn-secondary"><i class="fa fa-minus"></i>out of stack</button>
+                        {%endif%}
+                         <button class="btn btn-danger" id="btnfav"><i class="fa fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.addEventListener("DOMContentLoaded",function (event) {
+            const btnMinus=document.getElementById('btnminus');
+            const btnPlus=document.getElementById('btnplus');
+            let txtQty=document.getElementById('txtqty'); 
+            let pid=document.getElementById('pid');
+            let btncart=document.getElementById('btnCart');
+            let btnfav=document.getElementById('btnfav');
+              
+
+            btnMinus.addEventListener("click",function ()  {
+                let qty=parseInt(txtQty.value,10)
+                qty=isNaN(qty)?0:qty
+                if(qty > 1){
+                    qty--
+                    txtQty.value=qty
+                    
+                }
+                
+            });
+            btnPlus.addEventListener("click",function () {
+                let qty=parseInt(txtQty.value,10)
+                qty=isNaN(qty)?0:qty
+                if(qty < 10){
+                    qty++
+                    txtQty.value=qty
+                 
+                }
+            });
+            btncart.addEventListener("click",function () {
+               let qty=parseInt(txtQty.value,10)
+               qty=isNaN(qty)?0:qty
+               if(qty > 0){
+                   let postobj={
+                    product_qty:qty,
+                    pid:pid.value,
+                    
+                   }
+                   console.log(postobj)
+                   fetch("/add_cart", {
+                    method: "POST",
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify(postobj)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // If not JSON, return text to diagnose the issue
+                        return response.text().then(text => { throw new Error(text) });
+                    }
+                    return response.json();  // This parses the JSON response
+                })
+                .then(data => {
+                    console.log(data);
+                    alert("Product added to cart successfully!");
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    alert("Failed to add product to cart. Error: " + error.message);
+                });
+                
+               }
+               else{
+                alert("please enter the value")
+               }
+               
+            });
+            
+            /* ------------------  add to favourite  --------------------*/
+            btnfav.addEventListener("click",function () {
+               
+                let postobj={
+                    pid:pid.value,
+                    }
+                    console.log(postobj)
+                    fetch("/add_fav", {
+                     method: "POST",
+                     credentials: 'same-origin',
+                     headers: {
+                         'Accept': 'application/json',
+                         'Content-Type': 'application/json',
+                         'X-Requested-With': 'XMLHttpRequest',
+                         'X-CSRFToken': '{{ csrf_token }}',
+                     },
+                     body: JSON.stringify(postobj)
+                }).then(response => {
+                    if (!response.ok) {
+                         // If not JSON, return text to diagnose the issue
+                        return response.text().then(text => { throw new Error(text) });
+                    }
+                    return response.json();  // This parses the JSON response
+                }).then(data => {
+                    console.log(data);
+                    alert("Product added to cart successfully!");
+                }).catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    alert("Failed to add product to cart. Error: " + error.message);
+                });
+            });
+            /* ------------------  end to favourite  --------------------*/
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+   
+   <section class="bg-light py-4 my-5" style="min-height: 600px;">
+      <div class="container">
+         <div class="row">
+            <div class="col-12">
+               <h4 class="mb-3">Cart Items</h4>
+               <hr style="border-color:rgb(113, 172, 240),">
+               
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>Unit</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                    <th>Remove</th>
+                </tr>
+                {% for item in cart %}
+                    <tr>
+                        <td><img src="{{ item.product.product_image.url }}" alt="" height="75px"></td>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.product.selling_price | stringformat:'d' }}</td>
+                        <td>{{ item.product_qty }}</td>
+                        <td class="amt">{{ item.total_cost | stringformat:'d' }}</td>
+                        <td><a href="{% url 'remove_cart' item.id %}" class="btn btn-danger btn-sm" onclick="return confirm('do you want to delete')"><i class="fa fa-trash"></i>Remove</a></td>
+                        
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td colspan="2"> <b>TOTAL AMOUNT</b></td>
+                    <td id="net">0</td>
+                </tr>
+            </table>
+         </div>
+      </div>
+   </section>
+   <script>
+        const amt=document.querySelectorAll('.amt')
+        const arr=Array.from(amt)
+        const res=arr.reduce((acc,curr)=>{
+            return acc+=Number(curr.textContent)
+        },0);
+        document.getElementById('net').innerHTML="RS : "+res;
+   </script>
+{% endblock %}

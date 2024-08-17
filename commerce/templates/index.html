@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+   
+    <div id="carouselExampleIndicators" class="carousel slide" >
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner" >
+          <div class="carousel-item active">
+            <img src="{% static 'photo/cus1.jpg' %}" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'photo/cus2.jpg' %}" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'photo/cus3.jpg' %}" class="d-block w-100" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <!-- offers details -->
+     <div class="container">
+      <div class="row">
+        <div class="col-12"><h1>Lastest Offer</h1></div>
+        {% for i in product %}
+            <div class="clo-md-4 col-lg-3">
+               <div class="card my-3">
+                  <a href="{% url 'productdetails' i.category.name i.name %}">
+                        <div class="card-body">
+                           <img src="{{ i.product_image.url }}" alt="Categories" class="card-image-top">
+                           <h5 class="card-title text-primary">{{i.name}}</h5>
+                           <p class="card-text">
+                               <span class="float-start old-price"><s>RS.{{i.original_price | stringformat:'d'}}</s>
+                               </span>
+                               <span class="float-end new-price">RS.{{i.selling_price | stringformat:'d'}}
+                               </span>
+                           </p>
+                           
+                        </div>
+                  </a>
+               </div>
+            </div>
+       {% endfor %}
+      </div>
+     </div>
+{% endblock %}

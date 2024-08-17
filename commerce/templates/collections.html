@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+   <!-- <section class="py-5 text-center container" style="margin-top: 40px;">
+      <div class="row p-lg-5">
+         <div class="col-lg-6 cd-md-8 mx-auto">
+            <h1 class="fw-light">items</h1>
+            <p class="lead text-muted">list of items</p>
+            <a href="" class="btn btn-primary my-2">already</a>
+            <a href="" class="btn btn-primary my-2">save</a>
+         </div>
+      </div>
+   </section> -->
+   <section class="bg-light py-4 my-5">
+      <div class="container">
+         <div class="row">
+            <div class="col-12">
+               <h4 class="mb-3">Categories</h4>
+               <hr style="border-color:rgb(113, 172, 240),">
+               
+            </div>
+            {% for i in res %}
+               <div class="col-md-4 col-lg-3">
+                  <div class="card my-3">
+                     <a href="{% url 'collectionsview' i.name %} ">
+                        <div class="card-body">
+                           <img src="{{ i.image.url }}" alt="Categories" class="card-image-top">
+                           <h5 class="card-title text-primary">{{i.name}}</h5>
+                           <p class="card-text">{{i.descriptions}}</p>
+                           <a href="" class="btn btn primary btn-sw">view details</a>
+                        </div>
+                     </a>
+                  </div>
+               </div>
+            {% endfor %}
+         </div>
+      </div>
+   </section>
+{% endblock %}
